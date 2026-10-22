@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>焦虑浓度检测 · 你的精神状态像哪个时代的谁</title>
+<meta name="description" content="从 80 道题的题库里随机抽 25 题，测出你的焦虑浓度和精神内耗指数，并告诉你：你和历史上哪位名人的精神状态最像。">
+<meta name="theme-color" content="#FBF8F4">
+<meta name="format-detection" content="telephone=no">
+<meta property="og:type" content="website">
+<meta property="og:title" content="焦虑浓度检测 · 你像哪个时代的谁">
+<meta property="og:description" content="25 道题，测出你的焦虑浓度，并匹配一位历史上精神状态最像你的人。">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+<div class="bg-glow" aria-hidden="true"></div>
+
+<noscript>
+  <div style="max-width:480px;margin:80px auto;padding:24px;font-family:system-ui;font-size:15px;line-height:1.8;color:#46423B;text-align:center">
+    这个测评需要开启 JavaScript 才能运行。请在浏览器设置中允许 JavaScript 后刷新页面。
+  </div>
+</noscript>
+
+<main class="app">
+
+  <!-- ==================== 首页 ==================== -->
+  <section class="screen is-active" id="screen-intro">
+    <header class="topbar">
+      <span class="brand">ANXIETY LAB</span>
+      <span class="brand-sep" aria-hidden="true"></span>
+      <span class="brand brand-cn">焦虑浓度检测</span>
+    </header>
+
+    <div class="intro-hero">
+      <div class="pill">25 题 · 约 3 分钟 · 无需注册</div>
+      <h1>你现在<br>有多焦虑？</h1>
+      <p class="lead">测出你的精神内耗指数，再告诉你一件事：<br>你的精神状态，最像历史上哪一位。</p>
+    </div>
+
+    <div class="monitor" aria-hidden="true">
+      <div class="monitor-head">
+        <span class="monitor-label">RESTING · 静息监测</span>
+        <span class="monitor-live"><i class="dot"></i>LIVE</span>
+      </div>
+      <svg class="ecg" viewBox="0 0 320 90" preserveAspectRatio="none">
+        <path class="ecg-grid" d="M0 45 H320" />
+        <path class="ecg-base" d="M0 52 L38 52 L44 48 L50 52 L86 52 L92 44 L97 12 L103 74 L109 52 L150 52 L156 48 L162 52 L198 52 L204 44 L209 12 L215 74 L221 52 L262 52 L268 48 L274 52 L320 52" />
+        <path class="ecg-line" d="M0 52 L38 52 L44 48 L50 52 L86 52 L92 44 L97 12 L103 74 L109 52 L150 52 L156 48 L162 52 L198 52 L204 44 L209 12 L215 74 L221 52 L262 52 L268 48 L274 52 L320 52" />
+      </svg>
+      <div class="monitor-foot">
+        <span>采样中</span><span>0% – 100%</span>
+      </div>
+    </div>
+
+    <div class="intro-actions">
+      <button class="btn btn-primary" id="btn-start" type="button">
+        开始检测
+        <span class="btn-arrow" aria-hidden="true">→</span>
+      </button>
+      <button class="btn btn-ghost btn-resume" id="btn-last" type="button" hidden>
+        查看上次结果 <span id="last-score"></span>
+      </button>
+    </div>
+
+    <ul class="facts">
+      <li><b>80 题题库</b>，每次随机抽 25 题，四维交叉出题</li>
+      <li><b>全部本地计算</b>，不上传、不收集任何信息</li>
+      <li><b>1 张结果卡片</b>，可存图、可直接分享</li>
+    </ul>
+
+    <footer class="foot">
+      <p>参考焦虑自评量表常见的四个维度设计，仅供自我观察与娱乐，不构成医学诊断。</p>
+    </footer>
+  </section>
+
+  <!-- ==================== 答题 ==================== -->
+  <section class="screen" id="screen-quiz" aria-live="polite">
+    <div class="quiz-head">
+      <button class="icon-btn" id="btn-back" type="button" aria-label="返回上一题">←</button>
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span id="progress-label">01 / 25</span>
+          <span id="progress-dim" class="progress-dim"></span>
+        </div>
+        <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="25" aria-valuenow="0" id="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-body" id="quiz-body">
+      <div class="q-index">Q<span id="q-num">01</span><span class="q-total" id="q-total">/ 25</span></div>
+      <h2 class="q-text" id="q-text"></h2>
+      <p class="q-note" id="q-note"></p>
+      <div class="options" id="options" role="radiogroup" aria-label="选择一个最接近的频率"></div>
+    </div>
+
+    <div class="quiz-foot">
+      <span class="quiz-hint">凭第一反应选，不必纠结</span>
+    </div>
+  </section>
+
+  <!-- ==================== 结果 ==================== -->
+  <section class="screen" id="screen-result">
+    <div class="result-inner" id="result-inner">
+
+      <header class="result-head">
+        <span class="brand">检测报告</span>
+        <span class="result-date" id="result-date"></span>
+      </header>
+
+      <!-- 分数卡 -->
+      <div class="card score-card">
+        <div class="ring-wrap">
+          <svg class="ring" viewBox="0 0 220 220" aria-hidden="true">
+            <circle class="ring-bg" cx="110" cy="110" r="94"></circle>
+            <circle class="ring-fg" id="ring-fg" cx="110" cy="110" r="94"></circle>
+          </svg>
+          <div class="score-center">
+            <div class="score-num"><span id="score-num">0</span><em>分</em></div>
+            <div class="score-of">焦虑浓度 / 100</div>
+          </div>
+        </div>
+
+        <div class="tier-block">
+          <div class="tier-level" id="tier-level"></div>
+          <h2 class="tier-name" id="tier-name"></h2>
+          <p class="tier-tagline" id="tier-tagline"></p>
+        </div>
+
+        <div class="scale">
+          <div class="scale-track">
+            <div class="scale-marker" id="scale-marker"><span></span></div>
+          </div>
+          <div class="scale-labels"><span>0 心如止水</span><span>100 焦虑本体</span></div>
+        </div>
+
+        <p class="tier-desc" id="tier-desc"></p>
+      </div>
+
+      <!-- 名人 -->
+      <div class="section-label">你的精神同类 <span>按四维分布匹配</span></div>
+      <article class="card figure-main" id="figure-main"></article>
+      <div class="figure-list" id="figure-list"></div>
+      <p class="figure-note">下面两位和你同档，浓度接近，只是焦虑进来的通道不同。</p>
+
+      <!-- 配方 -->
+      <div class="section-label">你的焦虑配方</div>
+      <div class="card">
+        <p class="recipe" id="recipe"></p>
+        <div class="bars" id="bars"></div>
+      </div>
+
+      <!-- 建议 -->
+      <div class="section-label">接下来可以做的</div>
+      <div class="card advice-card">
+        <div class="advice" id="advice-list"></div>
+      </div>
+
+      <!-- 分享 -->
+      <div class="share-row">
+        <button class="btn btn-primary" id="btn-share-img" type="button">生成分享图</button>
+        <button class="btn btn-ghost" id="btn-copy" type="button">复制文案</button>
+      </div>
+      <button class="linkbtn link-center" id="btn-retry" type="button">重新测一次</button>
+      <p class="disclaimer" id="disclaimer"></p>
+    </div>
+  </section>
+
+</main>
+
+<!-- 分享图弹层 -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-body">
+    <div class="modal-head">
+      <span>长按图片保存，或点下方按钮</span>
+      <button class="icon-btn icon-btn-sm" data-close type="button" aria-label="关闭">✕</button>
+    </div>
+    <div class="modal-imgwrap">
+      <img id="share-img" alt="我的焦虑浓度检测结果卡片">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="btn-download" type="button">保存图片</button>
+      <button class="btn btn-ghost" data-close type="button">关闭</button>
+    </div>
+    <p class="modal-tip">iOS 用户：长按上方图片 → 存储到相册</p>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="assets/data.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
